@@ -1,0 +1,16 @@
+
+%module(directors="1") goctp
+%{
+#include "./api/v6.3.15_20190220_api_tradeapi_se_linux64/ThostFtdcUserApiDataType.h"
+#include "./api/v6.3.15_20190220_api_tradeapi_se_linux64/ThostFtdcUserApiStruct.h"
+#include "./api/v6.3.15_20190220_api_tradeapi_se_linux64/ThostFtdcTraderApi.h"
+#include "./api/v6.3.15_20190220_api_tradeapi_se_linux64/ThostFtdcMdApi.h"
+%}
+
+%feature("director") CThostFtdcMdSpi;
+%feature("director") CThostFtdcTraderSpi;
+
+%include "./api/v6.3.15_20190220_api_tradeapi_se_linux64/ThostFtdcUserApiDataType.h"
+%include "./api/v6.3.15_20190220_api_tradeapi_se_linux64/ThostFtdcUserApiStruct.h"
+%include "./api/v6.3.15_20190220_api_tradeapi_se_linux64/ThostFtdcTraderApi.h"
+%include "./api/v6.3.15_20190220_api_tradeapi_se_linux64/ThostFtdcMdApi.h"
