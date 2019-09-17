@@ -5,4 +5,4 @@ install:
 	go install -v -x -work -buildmode=shared -linkshared
 
 build:
-	go build -v -x -linkshared -o ctp *.go
+	go build -v -x -linkshared -o ctp ./demo/*.go

@@ -7,19 +7,20 @@
 
 ## 构建
     go get -u github.com/mayiweb/goctp
-    构建过程比较慢，需要多等一会儿。
+    构建过程比较慢，需要多等一会儿
+    通过 go get 下载会自动构建，也可以手动构建，进入 github.com/mayiweb/goctp 目录 执行 make install 即可
 
 ## 依赖
-    ctp 默认使用的 gbk 编码，需要用到开源库转换为 utf8
+    ctp 默认使用 gbk 编码，需要用到开源库转换为 utf8
     go get -u github.com/axgle/mahonia
 
 ## 编译
+    进入 github.com/mayiweb/goctp/demo 目录，或将该目录里面的文件全部复制出来组成一个新项目
     make build
-    编译成功后会在当前目录生成 ctp 可执行文件。
-    ./ctp [运行模式|默认testing]
+    编译成功后会在当前目录生成 ctp 可执行文件（可以修改 Makefile 文件改变生成的文件名）
+    ./ctp [运行模式|默认test]
 
 ## 部署发布
-    可将 demo 目录下的全部文件复制出来组成一个新项目
     生成 ctp 文件后，使用 ldd ctp 命令查看依赖关系，并将如下文件放在同一文件夹（注意需要有执行权限）:
         ctp
         libruntime,sync-atomic.so

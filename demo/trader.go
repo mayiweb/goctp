@@ -492,6 +492,9 @@ func (p *FtdcTraderSpi) OnRtnOrder(pOrder goctp.CThostFtdcOrderField) {
                     "-------------------------------------------------------------------------------------------------"
         fmt.Println(OrderStr)
     }
+
+    // 将报单数据记录下来
+    MapOrderList.Store(mOrder.MapKey, mOrder)
 }
 
 // 成交通知（委托单在交易所成交了）
