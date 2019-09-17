@@ -33,8 +33,10 @@ func (p *FtdcMdSpi) OnFrontConnected() {
              "================================================================================================="
     fmt.Println(MdStr)
 
-    // 登录
-    p.ReqUserLogin()
+    // 登录（如果行情模块在交易模块后初始化则直接登录行情）
+    if Ctp.IsTraderInit {
+        p.ReqUserLogin()
+    }
 }
 
 // 行情用户登录
