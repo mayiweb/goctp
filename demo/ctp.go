@@ -1,11 +1,11 @@
 package main
 
 import (
-    "github.com/mayiweb/goctp"
+    "gitee.com/mayiweb/goctp"
+    "gitee.com/mayiweb/goctp/safe"
     "os"
     "fmt"
     "log"
-    "sync"
 )
 
 var (
@@ -19,10 +19,10 @@ var (
     TraderSpi FtdcTraderSpi
 
     // 交易所合约详情列表 InstrumentInfoStruct
-    MapInstrumentInfos sync.Map
+    MapInstrumentInfos safe.Map
 
     // 报单列表（已成交、未成交、撤单等状态）的列表数据 OrderListStruct
-    MapOrderList sync.Map
+    MapOrderList safe.Map
 
     // ctp 服务器，及交易账号
     MdFront []string
@@ -52,12 +52,12 @@ var (
 
 // Ctp 行情 spi 回调函数
 type FtdcMdSpi struct{
-    Client CtpClient
+    CtpClient
 }
 
 // Ctp 交易 spi 回调函数
 type FtdcTraderSpi struct{
-    Client CtpClient
+    CtpClient
 }
 
 // Ctp 客户端 行情、交易模块 全局变量
@@ -107,7 +107,7 @@ func SetTradeAccount() {
 
     switch RunMode {
 
-        // 迈科期货
+        // 生产环境
         case "prod":
             MdFront     = []string{}
             TraderFront = []string{}
@@ -117,7 +117,7 @@ func SetTradeAccount() {
             AppID       = ""
             AuthCode    = ""
 
-        // 与实际生产环境保持一致
+        // 测试环境 simnow (与实际生产环境保持一致)
         case "test":
             MdFront     = []string{"tcp://180.168.146.187:10110", "tcp://180.168.146.187:10111", "tcp://218.202.237.33:10112"}
             TraderFront = []string{"tcp://180.168.146.187:10100", "tcp://180.168.146.187:10101", "tcp://218.202.237.33:10102"}
@@ -188,7 +188,7 @@ func main() {
         IsTraderLogin: false,
     }
 
-    Ctp.MdApi.RegisterSpi(goctp.NewDirectorCThostFtdcMdSpi(&FtdcMdSpi{Client: Ctp}))
+    Ctp.MdApi.RegisterSpi(goctp.NewDirectorCThostFtdcMdSpi(&FtdcMdSpi{Ctp}))
 
     for _, val := range MdFront {
         Ctp.MdApi.RegisterFront(val)
@@ -196,7 +196,7 @@ func main() {
     Ctp.MdApi.Init()
 
 
-    Ctp.TraderApi.RegisterSpi(goctp.NewDirectorCThostFtdcTraderSpi(&FtdcTraderSpi{Client: Ctp}))
+    Ctp.TraderApi.RegisterSpi(goctp.NewDirectorCThostFtdcTraderSpi(&FtdcTraderSpi{Ctp}))
 
     for _, val := range TraderFront {
         Ctp.TraderApi.RegisterFront(val)

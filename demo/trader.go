@@ -1,7 +1,7 @@
 package main
 
 import (
-    "github.com/mayiweb/goctp"
+    "gitee.com/mayiweb/goctp"
     "fmt"
     "log"
     "time"
@@ -206,18 +206,11 @@ func (p *FtdcTraderSpi) OnRspQryInstrument(pInstrument goctp.CThostFtdcInstrumen
         mInstrumentInfo.UnderlyingMultiple     = pInstrument.GetUnderlyingMultiple();
         mInstrumentInfo.CombinationType        = string(pInstrument.GetCombinationType());
 
-        MapInstrumentInfos.Store(mapKey, mInstrumentInfo)
+        MapInstrumentInfos.Set(mapKey, mInstrumentInfo)
 
         if bIsLast {
 
-            MapInstrumentInfoSize := 0
-
-            MapInstrumentInfos.Range(func(k, v interface{}) bool {
-                MapInstrumentInfoSize += 1
-                return true
-            })
-
-            log.Printf("获得合约记录 %v 条\n", MapInstrumentInfoSize)
+            log.Printf("获得合约记录 %v 条\n", MapInstrumentInfos.Size())
 
             if !Ctp.IsTraderInitFinish {
                 // 请求查询资金账户
@@ -358,30 +351,27 @@ func (p *FtdcTraderSpi) OnRspQryOrder(pOrder goctp.CThostFtdcOrderField, pRspInf
             mOrder.MapKey = pOrder.GetInstrumentID() + "_" + TrimSpace(pOrder.GetOrderSysID())
 
             // 记录报单数据
-            MapOrderList.Store(mOrder.MapKey, mOrder)
+            MapOrderList.Set(mOrder.MapKey, mOrder)
         }
 
         if bIsLast {
 
             fmt.Println("-------------------------------------------------------------------------------------------------")
 
-            MapOrderListSize    := 0
             MapOrderNoTradeSize := 0
-            MapOrderList.Range(func(key, v interface{}) bool {
 
+            mOrderList := MapOrderList.GetAll()
+            for _, v := range mOrderList {
                 val := v.(OrderListStruct)
-
-                MapOrderListSize += 1
 
                 // 输出 未成交、部分成交 的报单
                 if val.OrderStatus == string(goctp.THOST_FTDC_OST_NoTradeQueueing) || val.OrderStatus == string(goctp.THOST_FTDC_OST_PartTradedQueueing) {
                     MapOrderNoTradeSize += 1
                     fmt.Printf("- 合约：%v   \t%v:%v   \t数量：%v   \t价格：%v   \t报单编号：%v (%v)\n", val.InstrumentID, val.DirectionTitle, val.CombOffsetFlagTitle, val.Volume, val.LimitPrice, TrimSpace(val.OrderSysID), val.OrderStatusTitle)
                 }
-                return true
-            })
+            }
 
-            fmt.Printf("- 共有报单记录 %v 条，未成交 %v 条（不含错单）\n", MapOrderListSize, MapOrderNoTradeSize)
+            fmt.Printf("- 共有报单记录 %v 条，未成交 %v 条（不含错单）\n", MapOrderList.Size(), MapOrderNoTradeSize)
             fmt.Println("-------------------------------------------------------------------------------------------------")
 
             if !Ctp.IsTraderInitFinish {
@@ -494,7 +484,7 @@ func (p *FtdcTraderSpi) OnRtnOrder(pOrder goctp.CThostFtdcOrderField) {
     }
 
     // 将报单数据记录下来
-    MapOrderList.Store(mOrder.MapKey, mOrder)
+    MapOrderList.Set(mOrder.MapKey, mOrder)
 }
 
 // 成交通知（委托单在交易所成交了）
@@ -715,13 +705,13 @@ func (p *FtdcTraderSpi) OrderCancel (InstrumentID string, OrderSysID string) int
     mapKey := InstrumentID + "_" + OrderSysID
 
     // 检查报单列表数据是否存在
-    mOrderV, mapRes := MapOrderList.Load(mapKey)
-    if !mapRes {
+    mOrderVal, mOrderOk := MapOrderList.Get(mapKey)
+    if !mOrderOk {
         fmt.Printf("撤消报单失败：合约 %v 报单编号 %v 不存在！\n", InstrumentID, OrderSysID)
         return 0
     }
 
-    mOrder := mOrderV.(OrderListStruct)
+    mOrder := mOrderVal.(OrderListStruct)
 
     req := goctp.NewCThostFtdcInputOrderActionField()
 
@@ -842,7 +832,7 @@ func GetInvestorPositionStruct (pInvestorPosition goctp.CThostFtdcInvestorPositi
 
 // 获得合约详情信息
 func GetInstrumentInfo(InstrumentID string) (InstrumentInfoStruct, bool) {
-    if v, ok := MapInstrumentInfos.Load(InstrumentID); ok {
+    if v, ok := MapInstrumentInfos.Get(InstrumentID); ok {
         return v.(InstrumentInfoStruct), true
     } else {
         var mInstrumentInfo InstrumentInfoStruct
@@ -853,17 +843,16 @@ func GetInstrumentInfo(InstrumentID string) (InstrumentInfoStruct, bool) {
 // 获得期货合约列表【只有期货，不含期权】
 func GetFuturesList() []string {
     var InstrumentList []string
-    MapInstrumentInfos.Range(func(k, v interface{}) bool {
 
+    mInstrumentInfos := MapInstrumentInfos.GetAll()
+    for _, v := range mInstrumentInfos {
         val := v.(InstrumentInfoStruct)
 
         // 类型为期货的合约
         if val.ProductClass == "1" {
             InstrumentList = append(InstrumentList, val.InstrumentID)
         }
-
-        return true
-    })
+    }
 
     return InstrumentList
 }
