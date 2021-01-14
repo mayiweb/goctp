@@ -7,7 +7,7 @@ package main
 import "C"
 
 import (
-    "gitee.com/mayiweb/goctp"
+    "github.com/mayiweb/goctp"
     "fmt"
     "log"
     "unsafe"

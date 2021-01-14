@@ -9,6 +9,7 @@
     go get -u github.com/mayiweb/goctp
     构建过程比较慢，需要多等一会儿
     通过 go get 下载会自动构建，也可以手动构建，进入 github.com/mayiweb/goctp 目录 执行 make install 即可
+    码云地址（国内的速度快）：gitee.com/mayiweb/goctp
 
 ## 依赖
     ctp 默认使用 gbk 编码，需要用到开源库转换为 utf8

@@ -1,8 +1,8 @@
 package main
 
 import (
-    "gitee.com/mayiweb/goctp"
-    "gitee.com/mayiweb/goctp/safe"
+    "github.com/mayiweb/goctp"
+    "github.com/mayiweb/goctp/safe"
     "os"
     "fmt"
     "log"
