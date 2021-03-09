@@ -1,16 +1,16 @@
 
 %module(directors="1") goctp
 %{
-#include "./api/v6.5.1_20200908_api_tradeapi_se_linux64/ThostFtdcUserApiDataType.h"
-#include "./api/v6.5.1_20200908_api_tradeapi_se_linux64/ThostFtdcUserApiStruct.h"
-#include "./api/v6.5.1_20200908_api_tradeapi_se_linux64/ThostFtdcTraderApi.h"
-#include "./api/v6.5.1_20200908_api_tradeapi_se_linux64/ThostFtdcMdApi.h"
+#include "./api/ThostFtdcUserApiDataType.h"
+#include "./api/ThostFtdcUserApiStruct.h"
+#include "./api/ThostFtdcTraderApi.h"
+#include "./api/ThostFtdcMdApi.h"
 %}
 
 %feature("director") CThostFtdcMdSpi;
 %feature("director") CThostFtdcTraderSpi;
 
-%include "./api/v6.5.1_20200908_api_tradeapi_se_linux64/ThostFtdcUserApiDataType.h"
-%include "./api/v6.5.1_20200908_api_tradeapi_se_linux64/ThostFtdcUserApiStruct.h"
-%include "./api/v6.5.1_20200908_api_tradeapi_se_linux64/ThostFtdcTraderApi.h"
-%include "./api/v6.5.1_20200908_api_tradeapi_se_linux64/ThostFtdcMdApi.h"
+%include "./api/ThostFtdcUserApiDataType.h"
+%include "./api/ThostFtdcUserApiStruct.h"
+%include "./api/ThostFtdcTraderApi.h"
+%include "./api/ThostFtdcMdApi.h"
