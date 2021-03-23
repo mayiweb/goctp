@@ -1,25 +1,33 @@
 # goctp
-上海期货交易所 ctp 接口 Golang版 (for linux64)
+This library pre-builds the CTP required shared-objects using cgo.
 
-## 环境
+## Prerequisites
     install go
     install swig
 
-## 构建
-    go get -u github.com/mayiweb/goctp
-    构建过程比较慢，需要多等一会儿
-    通过 go get 下载会自动构建，也可以手动构建，进入 github.com/mayiweb/goctp 目录 执行 make install 即可
-    码云地址（国内的速度快）：gitee.com/mayiweb/goctp
+## Swig file
+```
+%% goctp.swigcxx
 
-## 依赖
-    ctp 默认使用 gbk 编码，需要用到开源库转换为 utf8
-    go get -u github.com/axgle/mahonia
+%module(directors="1") goctp
+%{
+#include "./api/ThostFtdcUserApiDataType.h"
+#include "./api/ThostFtdcUserApiStruct.h"
+#include "./api/ThostFtdcTraderApi.h"
+#include "./api/ThostFtdcMdApi.h"
+%}
 
-## 编译
-    进入 github.com/mayiweb/goctp/demo 目录，或将该目录里面的文件全部复制出来组成一个新项目
-    make build
-    编译成功后会在当前目录生成 ctp 可执行文件（可以修改 Makefile 文件改变生成的文件名）
-    ./ctp [运行模式|默认test]
+%feature("director") CThostFtdcMdSpi;
+%feature("director") CThostFtdcTraderSpi;
+
+%include "./api/ThostFtdcUserApiDataType.h"
+%include "./api/ThostFtdcUserApiStruct.h"
+%include "./api/ThostFtdcTraderApi.h"
+%include "./api/ThostFtdcMdApi.h"
+```
+
+If you want to reproduce the same results, copy the above file excluding the `%% goctp.swigcxx` line
+and put the file directly under the project folder and then run `swig -c++ -cgo -go -intgosize 64 goctp.swigcxx`.
 
 ## 部署发布
     生成 ctp 文件后，使用 ldd ctp 命令查看依赖关系，并将如下文件放在同一文件夹（注意需要有执行权限）:
