@@ -1,7 +1,7 @@
 package main
 
 import (
-    "gitee.com/mayiweb/goctp"
+    "github.com/mayiweb/goctp"
     "fmt"
     "log"
     "time"

@@ -569,6 +569,21 @@ func GetPositionDateTitle(PositionDate string) string {
     return title
 }
 
+// 是否空指针
+func IsNullPointer(p interface{}) bool {
+
+    if (p == nil) {
+        return true
+    }
+
+    pv := Sprintf("%v", p)
+    if pv == "0" {
+        return true
+    }
+
+    return false
+}
+
 // 请求日志
 func ReqMsg(Msg string) {
     log.Println(Msg)
@@ -668,6 +683,15 @@ func Println(a ...interface{}) (n int, err error) {
     return fmt.Println(a...)
 }
 
+// fmt.Sprintf
+func Sprintf(format string, a ...interface{}) string {
+    return fmt.Sprintf(format, a...)
+}
+
+// fmt.Printf
+func Printf(format string, a ...interface{}) (n int, err error) {
+    return fmt.Printf(format, a...)
+}
 
 func StrInArray(str string, arr []string) bool {
     for _, v := range arr {
