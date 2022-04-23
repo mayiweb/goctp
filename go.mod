@@ -1,3 +1,3 @@
-module goctp
+module github.com/mayiweb/goctp
 
 go 1.15
