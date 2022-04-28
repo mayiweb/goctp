@@ -129,6 +129,19 @@ func (p *Map2) GetList(key1 interface{}) (map[interface{}]interface{}, bool) {
     return mVal, true
 }
 
+// 获取二级 key 列数据条数
+func (p *Map2) GetListSize(key1 interface{}) int {
+    p.Lock.Lock()
+    defer p.Lock.Unlock()
+
+    _, mOk := p.Map[key1]
+    if !mOk {
+        return 0
+    }
+
+    return len(p.Map[key1])
+}
+
 // 删除一级 map
 func (p *Map2) Del(key1 interface{}) {
 
