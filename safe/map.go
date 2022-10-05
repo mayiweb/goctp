@@ -10,13 +10,13 @@ import (
 
 // 一级 Map
 type Map struct {
-    Lock sync.Mutex
+    Lock sync.RWMutex
     Map map[interface{}]interface{}
 }
 
 // 二级 Map
 type Map2 struct {
-    Lock sync.Mutex
+    Lock sync.RWMutex
     Map map[interface{}]map[interface{}]interface{}
 }
 
