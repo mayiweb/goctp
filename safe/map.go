@@ -36,8 +36,8 @@ func (p *Map) Set(name interface{}, value interface{}) {
 // 获取 map
 func (p *Map) Get(name interface{}) (interface{}, bool) {
 
-    p.Lock.Lock()
-    defer p.Lock.Unlock()
+    p.Lock.RLock()
+    defer p.Lock.RUnlock()
 
     mVal, mOk := p.Map[name]
     if !mOk {
@@ -67,16 +67,16 @@ func (p *Map) Clear() {
 
 // 数据条数
 func (p *Map) Size() int {
-    p.Lock.Lock()
-    defer p.Lock.Unlock()
+    p.Lock.RLock()
+    defer p.Lock.RUnlock()
 
     return len(p.Map)
 }
 
 // 获取全部 map
 func (p *Map) GetAll() map[interface{}]interface{} {
-    p.Lock.Lock()
-    defer p.Lock.Unlock()
+    p.Lock.RLock()
+    defer p.Lock.RUnlock()
 
     list := p.Map
 
@@ -105,8 +105,8 @@ func (p *Map2) Set(key1 interface{}, key2 interface{}, value interface{}) {
 // 获取 map
 func (p *Map2) Get(key1 interface{}, key2 interface{}) (interface{}, bool) {
 
-    p.Lock.Lock()
-    defer p.Lock.Unlock()
+    p.Lock.RLock()
+    defer p.Lock.RUnlock()
 
     mVal, mOk := p.Map[key1][key2]
     if !mOk {
@@ -118,8 +118,8 @@ func (p *Map2) Get(key1 interface{}, key2 interface{}) (interface{}, bool) {
 
 // 获取二级 key 列表
 func (p *Map2) GetList(key1 interface{}) (map[interface{}]interface{}, bool) {
-    p.Lock.Lock()
-    defer p.Lock.Unlock()
+    p.Lock.RLock()
+    defer p.Lock.RUnlock()
 
     mVal, mOk := p.Map[key1]
     if !mOk {
@@ -131,8 +131,8 @@ func (p *Map2) GetList(key1 interface{}) (map[interface{}]interface{}, bool) {
 
 // 获取二级 key 列数据条数
 func (p *Map2) GetListSize(key1 interface{}) int {
-    p.Lock.Lock()
-    defer p.Lock.Unlock()
+    p.Lock.RLock()
+    defer p.Lock.RUnlock()
 
     _, mOk := p.Map[key1]
     if !mOk {
@@ -171,16 +171,16 @@ func (p *Map2) Clear() {
 
 // 数据条数
 func (p *Map2) Size() int {
-    p.Lock.Lock()
-    defer p.Lock.Unlock()
+    p.Lock.RLock()
+    defer p.Lock.RUnlock()
 
     return len(p.Map)
 }
 
 // 获取全部 map
 func (p *Map2) GetAll() map[interface{}]map[interface{}]interface{} {
-    p.Lock.Lock()
-    defer p.Lock.Unlock()
+    p.Lock.RLock()
+    defer p.Lock.RUnlock()
 
     return p.Map
 }
