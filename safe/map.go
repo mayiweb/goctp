@@ -1,5 +1,5 @@
 /**
- * 安全 Map，防止并发读写
+ * 安全 Map 防止并发读写
  */
 
 package safe
@@ -78,9 +78,14 @@ func (p *Map) GetAll() map[interface{}]interface{} {
     p.Lock.RLock()
     defer p.Lock.RUnlock()
 
-    list := p.Map
+    // 申明一个新的 map 将 p.map 数据写入新 map 中，再访问数据就不是同一份数据了
+    Result := make(map[interface{}]interface{}, 0)
 
-    return list
+    for k, v := range p.Map {
+        Result[k] = v
+    }
+
+    return Result
 }
 
 // ------------------- 二级 map -------------------
@@ -121,12 +126,19 @@ func (p *Map2) GetList(key1 interface{}) (map[interface{}]interface{}, bool) {
     p.Lock.RLock()
     defer p.Lock.RUnlock()
 
-    mVal, mOk := p.Map[key1]
+    mLists, mOk := p.Map[key1]
     if !mOk {
         return nil, false
     }
 
-    return mVal, true
+    // 申明一个新的 map 将 p.map 数据写入新 map 中，再访问数据就不是同一份数据了
+    Result := make(map[interface{}]interface{}, 0)
+
+    for k, v := range mLists {
+        Result[k] = v
+    }
+
+    return Result, true
 }
 
 // 获取二级 key 列数据条数
@@ -182,5 +194,19 @@ func (p *Map2) GetAll() map[interface{}]map[interface{}]interface{} {
     p.Lock.RLock()
     defer p.Lock.RUnlock()
 
-    return p.Map
+    // 申明一个新的 map 将 p.map 数据写入新 map 中，再访问数据就不是同一份数据了
+    Result := make(map[interface{}]map[interface{}]interface{}, 0)
+
+    for k, v := range p.Map {
+
+        ResultList := make(map[interface{}]interface{}, 0)
+
+        for sk, sv := range v {
+            ResultList[sk] = sv
+        }
+
+        Result[k] = ResultList
+    }
+
+    return Result
 }
