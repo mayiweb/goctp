@@ -1,411 +1,56 @@
+/**
+ * 公共函数
+ */
+
 package main
 
 import (
-    "fmt"
     "os"
+    "fmt"
     "log"
+    "time"
     "strconv"
     "strings"
+    "runtime/debug"
     "path/filepath"
     "github.com/axgle/mahonia"
 )
 
-// 交易所合约详情
-type InstrumentInfoStruct struct {
-    // 合约代码
-    InstrumentID string
-    // 交易所代码
-    ExchangeID string
-    // 合约名称
-    InstrumentName string
-    // 合约在交易所的代码
-    ExchangeInstID string
-    // 产品代码
-    ProductID string
-    // 产品类型
-    ProductClass string
-    // 交割年份
-    DeliveryYear int
-    // 交割月
-    DeliveryMonth int
-    // 市价单最大下单量
-    MaxMarketOrderVolume int
-    // 市价单最小下单量
-    MinMarketOrderVolume int
-    // 限价单最大下单量
-    MaxLimitOrderVolume int
-    // 限价单最小下单量
-    MinLimitOrderVolume int
-    // 合约数量乘数
-    VolumeMultiple int
-    // 最小变动价位
-    PriceTick float64
-    // 创建日
-    CreateDate string
-    // 上市日
-    OpenDate string
-    // 到期日
-    ExpireDate string
-    // 开始交割日
-    StartDelivDate string
-    // 结束交割日
-    EndDelivDate string
-    // 合约生命周期状态
-    InstLifePhase string
-    // 当前是否交易
-    IsTrading int
-    // 持仓类型
-    PositionType string
-    // 持仓日期类型
-    PositionDateType string
-    // 多头保证金率
-    LongMarginRatio float64
-    // 空头保证金率
-    ShortMarginRatio float64
-    // 是否使用大额单边保证金算法
-    MaxMarginSideAlgorithm string
-    // 基础商品代码
-    UnderlyingInstrID string
-    // 执行价
-    StrikePrice float64
-    // 期权类型
-    OptionsType string
-    // 合约基础商品乘数
-    UnderlyingMultiple float64
-    // 组合类型
-    CombinationType string
-}
+// 获得交易所名称
+func GetExchangeName(ExchangeID string) string {
 
-// 资金账户信息
-type AccountInfoStruct struct {
-    // 更新 map 时用到
-    MapKey string
-    // 经纪公司代码
-    BrokerID string
-    // 投资者帐号
-    AccountID string
-    // 上次质押金额
-    PreMortgage float64
-    // 上次信用额度
-    PreCredit float64
-    // 上次存款额
-    PreDeposit float64
-    // 上次结算准备金
-    PreBalance float64
-    // 上次占用的保证金
-    PreMargin float64
-    // 利息基数
-    InterestBase float64
-    // 利息收入
-    Interest float64
-    // 入金金额
-    Deposit float64
-    // 出金金额
-    Withdraw float64
-    // 冻结的保证金
-    FrozenMargin float64
-    // 冻结的资金
-    FrozenCash float64
-    // 冻结的手续费
-    FrozenCommission float64
-    // 当前保证金总额
-    CurrMargin float64
-    // 资金差额
-    CashIn float64
-    // 手续费
-    Commission float64
-    // 平仓盈亏
-    CloseProfit float64
-    // 持仓盈亏
-    PositionProfit float64
-    // 期货结算准备金
-    Balance float64
-    // 可用资金
-    Available float64
-    // 可取资金
-    WithdrawQuota float64
-    // 基本准备金
-    Reserve float64
-    // 交易日
-    TradingDay string
-    // 结算编号
-    SettlementID int
-    // 信用额度
-    Credit float64
-    // 质押金额
-    Mortgage float64
-    // 交易所保证金
-    ExchangeMargin float64
-    // 投资者交割保证金
-    DeliveryMargin float64
-    // 交易所交割保证金
-    ExchangeDeliveryMargin float64
-    // 保底期货结算准备金
-    ReserveBalance float64
-    // 币种代码
-    CurrencyID string
-    // 上次货币质入金额
-    PreFundMortgageIn float64
-    // 上次货币质出金额
-    PreFundMortgageOut float64
-    // 货币质入金额
-    FundMortgageIn float64
-    // 货币质出金额
-    FundMortgageOut float64
-    // 货币质押余额
-    FundMortgageAvailable float64
-    // 可质押货币金额
-    MortgageableFund float64
-    // 特殊产品占用保证金
-    SpecProductMargin float64
-    // 特殊产品冻结保证金
-    SpecProductFrozenMargin float64
-    // 特殊产品手续费
-    SpecProductCommission float64
-    // 特殊产品冻结手续费
-    SpecProductFrozenCommission float64
-    // 特殊产品持仓盈亏
-    SpecProductPositionProfit float64
-    // 特殊产品平仓盈亏
-    SpecProductCloseProfit float64
-    // 根据持仓盈亏算法计算的特殊产品持仓盈亏
-    SpecProductPositionProfitByAlg float64
-    // 特殊产品交易所保证金
-    SpecProductExchangeMargin float64
-    // 业务类型
-    BizType string
-    // 延时换汇冻结金额
-    FrozenSwap float64
-    // 剩余换汇额度
-    RemainSwap float64
-}
+    title := ""
 
-// 报单列表（已成交、未成交、撤单等状态）的列表数据
-type OrderListStruct struct {
-    // 更新 map 时用到
-    MapKey string
-    // 经纪公司代码
-    BrokerID string
-    // 投资者代码
-    InvestorID string
-    // 合约代码
-    InstrumentID string
-    // 合约名称
-    InstrumentName string
-    // 交易所代码
-    ExchangeID string
-    // 前置编号
-    FrontID int
-    // 会话编号
-    SessionID int
-    // 报单编号
-    OrderSysID string
-    // 委托时间
-    InsertTime string
-    // 报单引用
-    OrderRef string
-    // 买卖方向
-    Direction string
-    // 组合开平标志
-    CombOffsetFlag string
-    // 组合投机套保标志
-    CombHedgeFlag string
-    // 价格
-    LimitPrice float64
-    // 数量
-    Volume int
-    // 状态信息
-    StatusMsg string
-    // 报单状态
-    OrderStatus string
-    // 买卖方向，中文
-    DirectionTitle string
-    // 报单状态，中文
-    OrderStatusTitle string
-    // 投机套保标志
-    CombHedgeFlagTitle string
-    // 开平标志，中文
-    CombOffsetFlagTitle string
-}
+    switch ExchangeID {
+        case "SHFE":
+            title = "上海期货交易所"
 
-// 持仓列表
-type InvestorPositionStruct struct {
-    // 更新 map 时用到
-    MapKey string
-    // 经纪公司代码
-    BrokerID string
-    // 投资者帐号
-    InvestorID string
-    // 合约代码
-    InstrumentID string
-    // 合约名称
-    InstrumentName string
-    // 交易所代码
-    ExchangeID string
-    // 投机套保标志
-    HedgeFlag string
-    // 投机套保标志标题
-    HedgeFlagTitle string
-    // 持仓日期类型（1：今日持仓，历史持仓）
-    PositionDate string
-    // 持仓日期类型标题
-    PositionDateTitle string
-    // 持仓多空方向
-    PosiDirection string
-    // 持仓多空方向标题
-    PosiDirectionTitle string
-    // 开仓成本
-    OpenCost float64
-    // 持仓成本
-    PositionCost float64
-    // 手续费
-    Commission float64
-    // 总持仓
-    Position int
-    // 上日持仓
-    YdPosition int
-    // 今日持仓
-    TodayPosition int
-    // 冻结的持仓量
-    ShortVolume int
-    // 多头冻结
-    LongFrozen int
-    // 空头冻结
-    ShortFrozen int
-    // 开仓量
-    OpenVolume int
-    // 平仓量
-    CloseVolume int
-    // 平仓盈亏
-    CloseProfit float64
-    // 持仓盈亏
-    PositionProfit float64
-    // 上次结算价
-    PreSettlementPrice float64
-    // 本次结算价
-    SettlementPrice float64
-    // 结算编号
-    SettlementID int
+        case "CZCE":
+            title = "郑州商品交易所"
 
-    // 止损价
-    StopPrice float64
-    // 持仓时段最高价
-    MaxTickPrice float64
-    // 移动止损价
-    MovingStopPrice float64
-    // 移动止损触发开启价差（仅盈利有效）
-    MovingPriceDiff float64
-    // 移动止损回退平仓价差（最高价回退到价差就平）
-    MovingStopPriceDiff float64
-}
+        case "DCE":
+            title = "大连商品交易所"
 
-// 深度行情
-type MarketDataStruct struct {
-    // 交易日
-    TradingDay string
-    // 合约代码
-    InstrumentID string
-    // 合约code【合约代码字母部分，非官方字段】
-    InstrumentCode string
-    // 交易所代码
-    ExchangeID string
-    // 最新价
-    LastPrice float64
-    // 上次结算价
-    PreSettlementPrice float64
-    // 昨收盘
-    PreClosePrice float64
-    // 昨持仓量
-    PreOpenInterest float64
-    // 今开盘
-    OpenPrice float64
-    // 最高价
-    HighestPrice float64
-    // 最低价
-    LowestPrice float64
-    // 数量
-    Volume int
-    // 成交金额
-    Turnover float64
-    // 持仓量
-    OpenInterest float64
-    // 今收盘
-    ClosePrice float64
-    // 本次结算价
-    SettlementPrice float64
-    // 涨停板价
-    UpperLimitPrice float64
-    // 跌停板价
-    LowerLimitPrice float64
-    // 最后修改时间
-    UpdateTime string
-    // 最后修改毫秒
-    UpdateMillisec int
-    // 申买价一
-    BidPrice1 float64
-    // 申买量一
-    BidVolume1 int
-    // 申卖价一
-    AskPrice1 float64
-    // 申卖量一
-    AskVolume1 int
-    // 当日均价
-    AveragePrice float64
-}
+        case "GFEX":
+            title = "广州期货交易所"
 
-// 昨日收盘数据
-type LastTimeMarketStruct struct {
-    // id
-    id int
-    // 交易日期
-    TradingDay string
-    // 合约代码
-    InstrumentID string
-    // 昨收盘
-    PreClosePrice float64
-    // 最新价
-    LastPrice float64
-    // 今开盘
-    OpenPrice float64
-    // 今收盘
-    ClosePrice float64
-    // 最低价
-    LowestPrice float64
-    // 最高价
-    HighestPrice float64
-    // 跌停板价
-    LowerLimitPrice float64
-    // 涨停板价
-    UpperLimitPrice float64
-    // 持仓量
-    OpenInterest int
-    // 成交数量
-    Volume int
-    // 创建时间
-    CreateTime string
-    // 涨跌方向
-    Direction string
-    // 昨收与今收的价差
-    PriceDiff float64
-}
+        case "CFFEX":
+            title = "中国金融期货交易所"
 
-// 输入报单
-type InputOrderStruct struct {
-    // 合约代码
-    InstrumentID string
-    // 买卖方向【0：买，1：卖】
-    Direction byte
-    // 价格
-    Price float64
-    // 数量
-    Volume int
-    // 组合开平标志【平仓可以设置】
-    CombOffsetFlag byte
+        case "INE":
+            title = "上海国际能源交易中心"
+
+        default:
+            title = "未知"
+    }
+
+    return title
 }
 
 // 获得报单多空方向
 func GetDirectionTitle(Direction string) string {
-    var title string
+
+    title := ""
 
     switch Direction {
         case "0":
@@ -422,11 +67,11 @@ func GetDirectionTitle(Direction string) string {
 }
 
 // 获得持仓多空方向
-func GetPosiDirectionTitle(PosiDirection string) string {
+func GetPosiDirectionTitle(Direction string) string {
 
     title := ""
 
-    switch PosiDirection {
+    switch Direction {
         case "1":
             title = "净"
 
@@ -452,17 +97,20 @@ func GetOrderStatusTitle(OrderStatus string) string {
         case "0":
             title = "已成交"
 
+        // 部分成交还在队列中
         case "1":
-            title = "部分成交还在队列中"
+            title = "部分成交"
 
+        // 部分成交不在队列中
         case "2":
-            title = "部分成交不在队列中"
+            title = "部分成交"
 
         case "3":
             title = "未成交"
 
+        // 未成交不在队列中
         case "4":
-            title = "未成交不在队列中"
+            title = "未成交"
 
         case "5":
             title = "已撤单"
@@ -569,10 +217,48 @@ func GetPositionDateTitle(PositionDate string) string {
     return title
 }
 
+// 获得产品类型
+func GetProductClassTitle(ProductClass string) string {
+
+    title := ""
+
+    switch ProductClass {
+
+        case "1":
+            title = "期货"
+
+        case "2":
+            title = "期货期权"
+
+        case "3":
+            title = "组合"
+
+        case "4":
+            title = "即期"
+
+        case "5":
+            title = "期转现"
+
+        case "6":
+            title = "现货期权"
+
+        case "7":
+            title = "TAS合约"
+
+        case "I":
+            title = "金属指数"
+
+        default:
+            title = "未知"
+    }
+
+    return title
+}
+
 // 是否空指针
 func IsNullPointer(p interface{}) bool {
 
-    if (p == nil) {
+    if p == nil {
         return true
     }
 
@@ -584,6 +270,29 @@ func IsNullPointer(p interface{}) bool {
     return false
 }
 
+// 退出程序
+func Exit() {
+    os.Exit(1)
+}
+
+// 获得当前时间
+func GetCurrentTime() string {
+    return string(time.Now().Format("2006-01-02 15:04:05"))
+}
+
+// 获得当前时间戳
+func GetCurrentUnix() int {
+    return int(time.Now().Unix())
+}
+
+// 日期转时间（例： 2020-06-29 08:00:00 转为 08:00:00）
+func DateToTime(date string) string {
+    loc, _      := time.LoadLocation("Local")
+    theTime1, _ := time.ParseInLocation("2006-01-02 15:04:05", date, loc)
+
+    return time.Unix(theTime1.Unix(), 0).Format("15:04:05")
+}
+
 // 请求日志
 func ReqMsg(Msg string) {
     log.Println(Msg)
@@ -591,7 +300,7 @@ func ReqMsg(Msg string) {
 
 // 请求 api 出现错误
 func ReqFailMsg(Msg string, iResult int) {
-    fmt.Printf("%v [%d: %s]\n", Msg, iResult, iResultMsg(iResult));
+    log.Printf("%v [%d: %s]\n", Msg, iResult, iResultMsg(iResult))
 }
 
 // 请求失败的错误码对应消息
@@ -599,13 +308,13 @@ func iResultMsg(iResult int) (string) {
 
     msg := ""
 
-    switch (iResult) {
+    switch iResult {
         case 0:
             msg = "成功";
             break;
 
         case -1:
-            msg = "请检查账号是否已经登陆";
+            msg = "请检查账号是否已经登录";
             break;
 
         case -2:
@@ -624,10 +333,32 @@ func iResultMsg(iResult int) (string) {
     return msg;
 }
 
-// 检查错误，有就抛出
+// 打印错误（存在错误的时候）
+func PrintErr(err error) {
+    if err != nil {
+        Println(err)
+    }
+}
+
+// 检查错误，有就抛出 panic
 func CheckErr(err error) {
     if err != nil {
         panic(err)
+    }
+}
+
+// 处理 panic
+func CheckPanic() {
+    if err := recover(); err != nil {
+
+        ErrStr := "-------------------------------------------------------------------------------------------------\n" +
+                "- 错误提示\n" +
+                "- 出错时间：" + GetCurrentTime() + "\n" +
+                "- 错误内容：" + fmt.Sprintf("%s", err) + "\n\n" +
+                string(debug.Stack()) +
+                "-------------------------------------------------------------------------------------------------"
+
+        Println(ErrStr)
     }
 }
 
@@ -647,34 +378,72 @@ func PathExists(path string) (bool, error) {
 
 // float64 保留几位小数点
 func Decimal(f float64, n int) float64 {
+
+    defer CheckPanic()
+
+    if f == 1.7976931348623157e+308 {
+        f = 0.0000
+    }
+
     value, _ := strconv.ParseFloat(fmt.Sprintf("%." + strconv.Itoa(n) + "f", f), 64)
     return value
 }
 
 // int 转 string
-func IntToString (i int) string {
+func IntToString(i int) string {
     return strconv.Itoa(i)
 }
 
 // float64 转 string
-func Float64ToString (f float64) string {
+func Float64ToString(f float64) string {
     return strconv.FormatFloat(f, 'f', 2, 64)
 }
 
 // string 转 float64
-func StringToFloat64 (str string) float64 {
+func StringToFloat64(str string) float64 {
     f64, _ := strconv.ParseFloat(str, 64)
     return f64
 }
 
 // string 转 int
-func StringToInt (str string) int {
+func StringToInt(str string) int {
     num, _ := strconv.Atoi(str)
     return num
 }
 
+// string 转 int32
+func StringToInt32(str string) int32 {
+    num, err := strconv.ParseInt(str, 10, 32)
+    if err != nil {
+        fmt.Println(str, err)
+    }
+    return int32(num)
+}
+
+// int32 转 string
+func Int32ToString(n int32) string {
+    buf := [11]byte{}
+    pos := len(buf)
+    i := int64(n)
+    signed := i < 0
+    if signed {
+        i = -i
+    }
+    for {
+        pos--
+        buf[pos], i = '0'+byte(i%10), i/10
+        if i == 0 {
+            if signed {
+                pos--
+                buf[pos] = '-'
+            }
+            return string(buf[pos:])
+        }
+    }
+}
+
 // 去掉左右两边空格
-func TrimSpace (str string) string {
+func TrimSpace(str string) string {
     return strings.TrimSpace(str)
 }
 
@@ -693,6 +462,16 @@ func Printf(format string, a ...interface{}) (n int, err error) {
     return fmt.Printf(format, a...)
 }
 
+// log.Println
+func LogPrintln(a ...interface{}) {
+    log.Println(a...)
+}
+
+// log.Printf
+func LogPrintf(format string, a ...interface{}) {
+    log.Printf(format, a...)
+}
+
 func StrInArray(str string, arr []string) bool {
     for _, v := range arr {
         if str == v {
@@ -700,6 +479,44 @@ func StrInArray(str string, arr []string) bool {
         }
     }
     return false
+}
+
+/**
+ * 字符串后面补位空格
+ *
+ * 例： ConvertToString("abc", 6)  // 字符串长6位，不足的补空格
+ */
+func StrAfterSpace(str string, length int) string {
+    result := str
+
+    for i := len(str); i < length; i++ {
+        result += " "
+    }
+
+    return result
+}
+
+// 编码转换（gbk 转 utf8）
+func GbkToUtf8(text string) string {
+
+    srcCoder := mahonia.NewDecoder("gbk")
+    tagCoder := mahonia.NewDecoder("utf-8")
+    srcResult := srcCoder.ConvertString(text)
+
+    _, cdata, _ := tagCoder.Translate([]byte(srcResult), true)
+
+    result := string(cdata)
+
+    return result
+}
+
+/**
+ * 字符串替换
+ *
+ * 例： result = StrReplace("文本内容", "被替换字符串", "替换为新的字符串")
+ */
+func StrReplace(content string, old string, newStr string) string {
+    return strings.Replace(content, old, newStr, -1)
 }
 
 // 获取当前路径
@@ -718,8 +535,8 @@ func GetCurrentDirectory() string {
  */
 func ConvertToString(text string, srcCode string, tagCode string) string {
 
-    srcCoder  := mahonia.NewDecoder(srcCode)
-    tagCoder  := mahonia.NewDecoder(tagCode)
+    srcCoder := mahonia.NewDecoder(srcCode)
+    tagCoder := mahonia.NewDecoder(tagCode)
     srcResult := srcCoder.ConvertString(text)
 
     _, cdata, _ := tagCoder.Translate([]byte(srcResult), true)
@@ -727,4 +544,19 @@ func ConvertToString(text string, srcCode string, tagCode string) string {
     result := string(cdata)
 
     return result
+}
+
+// 休眠（毫秒，1000 毫秒等于 1 秒）
+func Sleep(number int) {
+    time.Sleep(time.Millisecond * time.Duration(number))
+}
+
+// 将字符串转换成大写
+func ToUpper(str string) string {
+    return strings.ToUpper(str)
+}
+
+// 将字符串转换成小写
+func ToLower(str string) string {
+    return strings.ToLower(str)
 }
