@@ -22,7 +22,7 @@ func (p *FtdcTradeSpi) ReqMsg(Msg string) {
     defer CheckPanic()
 
     // 交易程序未初始化完成时，执行查询类的函数需要有1.5秒间隔
-    if !Ctp.IsTradeInitFinish {
+    if !Ctp.IsTradeInitFinish && RunMode != BackTestingMode {
         Sleep(1500)
     }
 
@@ -69,6 +69,14 @@ func (p *FtdcTradeSpi) IsErrorRspInfo(pRspInfo goctp.CThostFtdcRspInfoField, nRe
     }
 }
 
+// 获取API的版本信息
+func (p *FtdcTradeSpi) GetApiVersion() string {
+    if RunMode == BackTestingMode {
+        return TestCtpTradeApi.GetApiVersion()
+    } else {
+        return goctp.CThostFtdcTraderApiGetApiVersion()
+    }
+}
 
 // 当客户端与交易后台通信连接断开时，该方法被调用。当发生这个情况后，API会自动重新连接，客户端可不做处理。
 // 服务器已断线，该函数也会被调用。【api 会自动初始化程序，并重新登录】
@@ -92,7 +100,7 @@ func (p *FtdcTradeSpi) OnFrontConnected() {
     defer CheckPanic()
 
     Str := "-------------------------------------------------------------------------------------------------\n" +
-        "- 交易系统初始化成功，Api 版本：" + goctp.CThostFtdcTraderApiGetApiVersion() + "\n" +
+        "- 交易系统初始化成功，Api 版本：" + p.GetApiVersion() + "\n" +
         "-------------------------------------------------------------------------------------------------"
     Println(Str)
 

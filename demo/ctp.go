@@ -3,9 +3,8 @@ package main
 import (
     "gitee.com/mayiweb/goctp"
     "gitee.com/mayiweb/goctp/safe"
+    "gitee.com/mayiweb/goctp/testctp"
     "os"
-    "fmt"
-    "log"
 )
 
 var (
@@ -20,6 +19,9 @@ var (
 
     // 交易模块函数 句柄
     TradeSpi FtdcTradeSpi
+
+    TestCtpMdApi testctp.MdApi
+    TestCtpTradeApi testctp.TradeApi
 
     // 交易用户登录信息
     MapLogin safe.Map
@@ -77,6 +79,9 @@ var (
 
     // 运行模式（prod 生产，test 标准环境测试，dev 24小时测试）
     RunMode string
+
+    // 回测模式
+    BackTestingMode string = "backTesting"
 )
 
 // 设置交易账号
@@ -114,6 +119,16 @@ func SetTradeAccount() {
             AppID       = ""
             AuthCode    = ""
 
+        // 回测模式
+        case BackTestingMode:
+            MdFront     = []string{}
+            TraderFront = []string{}
+            BrokerID    = "8888"
+            InvestorID  = "10001"
+            Password    = ""
+            AppID       = ""
+            AuthCode    = ""
+
         default:
             Println("该模式未设置交易账号信息")
             os.Exit(1)
@@ -124,6 +139,9 @@ func init() {
     // 全局 行情、交易 函数句柄
     MdSpi    = FtdcMdSpi{}
     TradeSpi = FtdcTradeSpi{}
+
+    TestCtpMdApi    = testctp.MdApi{}
+    TestCtpTradeApi = testctp.TradeApi{}
 
     // 全局队列句柄
     Queue = &CtpQueue{}
@@ -157,20 +175,18 @@ func main() {
     // 设置交易账号
     SetTradeAccount()
 
-    log.Println("启动交易程序")
+    LogPrintln("启动交易程序")
 
     // 检查流文件目录是否存在
     fileExists, _ := PathExists(StreamFile)
     if !fileExists {
         err := os.Mkdir(StreamFile, os.ModePerm)
         if err != nil {
-           fmt.Println("创建目录失败，请检查是否有操作权限")
+           Println("创建目录失败，请检查是否有操作权限")
         }
     }
 
     Ctp = CtpClient {
-        MdApi: goctp.CThostFtdcMdApiCreateFtdcMdApi(StreamFile),
-        TradeApi: goctp.CThostFtdcTraderApiCreateFtdcTraderApi(StreamFile),
         BrokerID: BrokerID,
         InvestorID: InvestorID,
         Password: Password,
@@ -182,6 +198,53 @@ func main() {
         IsTradeInitFinish: false,
         IsMdLogin: false,
         IsTradeLogin: false,
+    }
+
+    // 回测模式
+    if RunMode == BackTestingMode {
+
+        LogPrintln("进入回测模式")
+
+        /*
+            // 重置 testctp 数据，相当于重新初始化（所有测试数据会被清空）
+            TestCtpTradeApi.Reset()
+
+
+            // 在第一笔 tick 之前设置，跨日期回测也需要设置
+            // 重置交易日回测环境（还原一些数据，便于跨日期测试）
+            testInstrument := testctp.InstrumentStruct{
+                ExchangeID: mInstrument.ExchangeID,
+                InstrumentID: mInstrument.InstrumentID,
+                VolumeMultiple: mInstrument.VolumeMultiple,
+            }
+
+            // 设置测试的合约参数
+            TestCtpTradeApi.SetInstrument(testInstrument)
+
+            // 重置当前交易日（跨日期回测需要在 tick 传递前设置，每个交易日都要设置）
+            TestCtpTradeApi.SetTradingDay(StringToInt(Ctp.TradingDay))
+
+
+
+            testTick := testctp.TickStruct{
+                TradingDay: Input.TestingTick.TradingDay,
+                InstrumentID: Input.TestingTick.InstrumentID,
+                UpdateTime: Input.TestingTick.UpdateTime,
+                LastPrice: Input.TestingTick.LastPrice,
+                BidPrice1: Input.TestingTick.BidPrice1,
+                AskPrice1: Input.TestingTick.AskPrice1,
+            }
+
+            // 开仓前将当前 tick 数据传给 testctp（在调用 Ctp.TradeApi.ReqOrderInsert 之前设置，便于设置成交时间与价格，使用对手价成交）
+            TestCtpTradeApi.SetOrderRefTick(iRequestID, testTick)
+         */
+
+        Ctp.MdApi    = new(testctp.MdApi)
+        Ctp.TradeApi = new(testctp.TradeApi)
+
+    } else {
+        Ctp.MdApi    = goctp.CThostFtdcMdApiCreateFtdcMdApi(StreamFile)
+        Ctp.TradeApi = goctp.CThostFtdcTraderApiCreateFtdcTraderApi(StreamFile)
     }
 
     Ctp.MdApi.RegisterSpi(goctp.NewDirectorCThostFtdcMdSpi(&FtdcMdSpi{Ctp}))

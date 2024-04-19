@@ -59,6 +59,15 @@ func (p *FtdcMdSpi) IsErrorRspInfo(pRspInfo goctp.CThostFtdcRspInfoField) bool {
     }
 }
 
+// 获取API的版本信息
+func (p *FtdcMdSpi) GetApiVersion() string {
+    if RunMode == BackTestingMode {
+        return TestCtpMdApi.GetApiVersion()
+    } else {
+        return goctp.CThostFtdcTraderApiGetApiVersion()
+    }
+}
+
 // 当客户端与交易后台通信连接断开时，该方法被调用。当发生这个情况后，API会自动重新连接，客户端可不做处理。
 // 服务器已断线，该函数也会被调用。【api 会自动初始化程序，并重新登录】
 func (p *FtdcMdSpi) OnFrontDisconnected(nReason int) {
@@ -75,7 +84,7 @@ func (p *FtdcMdSpi) OnFrontDisconnected(nReason int) {
 func (p *FtdcMdSpi) OnFrontConnected() {
 
     MdStr := "-------------------------------------------------------------------------------------------------\n" +
-        "- 行情系统初始化成功，Api 版本：" + goctp.CThostFtdcMdApiGetApiVersion() + "\n" +
+        "- 行情系统初始化成功，Api 版本：" + p.GetApiVersion() + "\n" +
         "-------------------------------------------------------------------------------------------------"
     Println(MdStr)
 

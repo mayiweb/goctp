@@ -1,5 +1,6 @@
 # goctp
 上海期货交易所 ctp 接口 Golang版 (for linux64)
+支持 testctp 回测
 
 ## 修改配置
     修改 ctp.go 文件的 SetTradeAccount 函数，写上对应的环境账号即可

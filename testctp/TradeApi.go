@@ -212,8 +212,7 @@ func (p *TradeApi) SubscribePublicTopic(nResumeType goctp.THOST_TE_RESUME_TYPE) 
 func (p *TradeApi) ReqAuthenticate(pReqAuthenticateField goctp.CThostFtdcReqAuthenticateField, nRequestID int) int {
 
     pResult := goctp.NewCThostFtdcRspAuthenticateField()
-
-    pResult = nil
+    pResult  = nil
 
     p.TradeSpi.OnRspAuthenticate(pResult, p.GetRspInfo(), nRequestID, true)
 
@@ -221,13 +220,11 @@ func (p *TradeApi) ReqAuthenticate(pReqAuthenticateField goctp.CThostFtdcReqAuth
 }
 
 // 注册用户终端信息，用于中继服务器多连接模式
-// 需要在终端认证成功后，用户登录前调用该接口
 func (p *TradeApi) RegisterUserSystemInfo(pUserSystemInfo goctp.CThostFtdcUserSystemInfoField) int {
     return 0
 }
 
 // 上报用户终端信息，用于中继服务器操作员登录模式
-// 操作员登录后，可以多次调用该接口上报客户信息
 func (p *TradeApi) SubmitUserSystemInfo(pUserSystemInfo goctp.CThostFtdcUserSystemInfoField) int {
     return 0
 }
@@ -263,6 +260,12 @@ func (p *TradeApi) ReqUserLogin(pReqUserLoginField goctp.CThostFtdcReqUserLoginF
 
 // 登出请求
 func (p *TradeApi) ReqUserLogout(pUserLogout goctp.CThostFtdcUserLogoutField, nRequestID int) int {
+
+    pResult := goctp.NewCThostFtdcUserLogoutField()
+    pResult  = nil
+
+    p.TradeSpi.OnRspUserLogout(pResult, p.GetRspInfo(), nRequestID, true)
+
     return 0
 }
 
@@ -283,26 +286,6 @@ func (p *TradeApi) ReqUserAuthMethod(pReqUserAuthMethod goctp.CThostFtdcReqUserA
 
 // 用户发出获取图形验证码请求
 func (p *TradeApi) ReqGenUserCaptcha(pReqGenUserCaptcha goctp.CThostFtdcReqGenUserCaptchaField, nRequestID int) int {
-    return 0
-}
-
-// 用户发出获取短信验证码请求
-func (p *TradeApi) ReqGenUserText(pReqGenUserText goctp.CThostFtdcReqGenUserTextField, nRequestID int) int {
-    return 0
-}
-
-// 用户发出带有图片验证码的登陆请求
-func (p *TradeApi) ReqUserLoginWithCaptcha(pReqUserLoginWithCaptcha goctp.CThostFtdcReqUserLoginWithCaptchaField, nRequestID int) int {
-    return 0
-}
-
-// 用户发出带有短信验证码的登陆请求
-func (p *TradeApi) ReqUserLoginWithText(pReqUserLoginWithText goctp.CThostFtdcReqUserLoginWithTextField, nRequestID int) int {
-    return 0
-}
-
-// 用户发出带有动态口令的登陆请求
-func (p *TradeApi) ReqUserLoginWithOTP(pReqUserLoginWithOTP goctp.CThostFtdcReqUserLoginWithOTPField, nRequestID int) int {
     return 0
 }
 
@@ -616,6 +599,12 @@ func (p *TradeApi) ReqOrderAction(pInputOrderAction goctp.CThostFtdcInputOrderAc
 
 // 查询最大报单数量请求
 func (p *TradeApi) ReqQryMaxOrderVolume(pQryMaxOrderVolume goctp.CThostFtdcQryMaxOrderVolumeField, nRequestID int) int {
+
+    pResult := goctp.NewCThostFtdcQryMaxOrderVolumeField()
+    pResult  = nil
+
+    p.TradeSpi.OnRspQryMaxOrderVolume(pResult, p.GetRspInfo(), nRequestID, true)
+
     return 0
 }
 
@@ -634,56 +623,122 @@ func (p *TradeApi) ReqSettlementInfoConfirm(pSettlementInfoConfirm goctp.CThostF
 
 // 请求删除预埋单
 func (p *TradeApi) ReqRemoveParkedOrder(pRemoveParkedOrder goctp.CThostFtdcRemoveParkedOrderField, nRequestID int) int {
+
+    pResult := goctp.NewCThostFtdcRemoveParkedOrderField()
+    pResult  = nil
+
+    p.TradeSpi.OnRspRemoveParkedOrder(pResult, p.GetRspInfo(), nRequestID, true)
+
     return 0
 }
 
 // 请求删除预埋撤单
 func (p *TradeApi) ReqRemoveParkedOrderAction(pRemoveParkedOrderAction goctp.CThostFtdcRemoveParkedOrderActionField, nRequestID int) int {
+
+    pResult := goctp.NewCThostFtdcRemoveParkedOrderActionField()
+    pResult  = nil
+
+    p.TradeSpi.OnRspRemoveParkedOrderAction(pResult, p.GetRspInfo(), nRequestID, true)
+
     return 0
 }
 
 // 执行宣告录入请求
 func (p *TradeApi) ReqExecOrderInsert(pInputExecOrder goctp.CThostFtdcInputExecOrderField, nRequestID int) int {
+
+    pResult := goctp.NewCThostFtdcInputExecOrderField()
+    pResult  = nil
+
+    p.TradeSpi.OnRspExecOrderInsert(pResult, p.GetRspInfo(), nRequestID, true)
+
     return 0
 }
 
 // 执行宣告操作请求
 func (p *TradeApi) ReqExecOrderAction(pInputExecOrderAction goctp.CThostFtdcInputExecOrderActionField, nRequestID int) int {
+
+    pResult := goctp.NewCThostFtdcInputExecOrderActionField()
+    pResult  = nil
+
+    p.TradeSpi.OnRspExecOrderAction(pResult, p.GetRspInfo(), nRequestID, true)
+
     return 0
 }
 
 // 询价录入请求
 func (p *TradeApi) ReqForQuoteInsert(pInputForQuote goctp.CThostFtdcInputForQuoteField, nRequestID int) int {
+
+    pResult := goctp.NewCThostFtdcInputForQuoteField()
+    pResult  = nil
+
+    p.TradeSpi.OnRspForQuoteInsert(pResult, p.GetRspInfo(), nRequestID, true)
+
     return 0
 }
 
 // 报价录入请求
 func (p *TradeApi) ReqQuoteInsert(pInputQuote goctp.CThostFtdcInputQuoteField, nRequestID int) int {
+
+    pResult := goctp.NewCThostFtdcInputQuoteField()
+    pResult  = nil
+
+    p.TradeSpi.OnRspQuoteInsert(pResult, p.GetRspInfo(), nRequestID, true)
+
     return 0
 }
 
 // 报价操作请求
 func (p *TradeApi) ReqQuoteAction(pInputQuoteAction goctp.CThostFtdcInputQuoteActionField, nRequestID int) int {
+
+    pResult := goctp.NewCThostFtdcInputQuoteActionField()
+    pResult  = nil
+
+    p.TradeSpi.OnRspQuoteAction(pResult, p.GetRspInfo(), nRequestID, true)
+
     return 0
 }
 
 // 批量报单操作请求
 func (p *TradeApi) ReqBatchOrderAction(pInputBatchOrderAction goctp.CThostFtdcInputBatchOrderActionField, nRequestID int) int {
+
+    pResult := goctp.NewCThostFtdcInputBatchOrderActionField()
+    pResult  = nil
+
+    p.TradeSpi.OnRspBatchOrderAction(pResult, p.GetRspInfo(), nRequestID, true)
+
     return 0
 }
 
 // 期权自对冲录入请求
 func (p *TradeApi) ReqOptionSelfCloseInsert(pInputOptionSelfClose goctp.CThostFtdcInputOptionSelfCloseField, nRequestID int) int {
+
+    pResult := goctp.NewCThostFtdcInputOptionSelfCloseField()
+    pResult  = nil
+
+    p.TradeSpi.OnRspOptionSelfCloseInsert(pResult, p.GetRspInfo(), nRequestID, true)
+
     return 0
 }
 
 // 期权自对冲操作请求
 func (p *TradeApi) ReqOptionSelfCloseAction(pInputOptionSelfCloseAction goctp.CThostFtdcInputOptionSelfCloseActionField, nRequestID int) int {
+
+    pResult := goctp.NewCThostFtdcInputOptionSelfCloseActionField()
+    pResult  = nil
+
+    p.TradeSpi.OnRspOptionSelfCloseAction(pResult, p.GetRspInfo(), nRequestID, true)
+
     return 0
 }
 
 // 申请组合录入请求
 func (p *TradeApi) ReqCombActionInsert(pInputCombAction goctp.CThostFtdcInputCombActionField, nRequestID int) int {
+
+    pResult := goctp.NewCThostFtdcInputCombActionField()
+    pResult  = nil
+
+    p.TradeSpi.OnRspCombActionInsert(pResult, p.GetRspInfo(), nRequestID, true)
+
     return 0
 }
 
@@ -960,26 +1015,56 @@ func (p *TradeApi) ReqQryTradingAccount(pQryTradingAccount goctp.CThostFtdcQryTr
 
 // 请求查询投资者
 func (p *TradeApi) ReqQryInvestor(pQryInvestor goctp.CThostFtdcQryInvestorField, nRequestID int) int {
+
+    pResult := goctp.NewCThostFtdcInvestorField()
+    pResult  = nil
+
+    p.TradeSpi.OnRspQryInvestor(pResult, p.GetRspInfo(), nRequestID, true)
+
     return 0
 }
 
 // 请求查询交易编码
 func (p *TradeApi) ReqQryTradingCode(pQryTradingCode goctp.CThostFtdcQryTradingCodeField, nRequestID int) int {
+
+    pResult := goctp.NewCThostFtdcTradingCodeField()
+    pResult  = nil
+
+    p.TradeSpi.OnRspQryTradingCode(pResult, p.GetRspInfo(), nRequestID, true)
+
     return 0
 }
 
 // 请求查询合约保证金率
 func (p *TradeApi) ReqQryInstrumentMarginRate(pQryInstrumentMarginRate goctp.CThostFtdcQryInstrumentMarginRateField, nRequestID int) int {
+
+    pResult := goctp.NewCThostFtdcInstrumentMarginRateField()
+    pResult  = nil
+
+    p.TradeSpi.OnRspQryInstrumentMarginRate(pResult, p.GetRspInfo(), nRequestID, true)
+
     return 0
 }
 
 // 请求查询合约手续费率
 func (p *TradeApi) ReqQryInstrumentCommissionRate(pQryInstrumentCommissionRate goctp.CThostFtdcQryInstrumentCommissionRateField, nRequestID int) int {
+
+    pResult := goctp.NewCThostFtdcInstrumentCommissionRateField()
+    pResult  = nil
+
+    p.TradeSpi.OnRspQryInstrumentCommissionRate(pResult, p.GetRspInfo(), nRequestID, true)
+
     return 0
 }
 
 // 请求查询交易所
 func (p *TradeApi) ReqQryExchange(pQryExchange goctp.CThostFtdcQryExchangeField, nRequestID int) int {
+
+    pResult := goctp.NewCThostFtdcExchangeField()
+    pResult  = nil
+
+    p.TradeSpi.OnRspQryExchange(pResult, p.GetRspInfo(), nRequestID, true)
+
     return 0
 }
 
@@ -992,8 +1077,7 @@ func (p *TradeApi) ReqQryProduct(pQryProduct goctp.CThostFtdcQryProductField, nR
 func (p *TradeApi) ReqQryInstrument(pQryInstrument goctp.CThostFtdcQryInstrumentField, nRequestID int) int {
 
     pResult := goctp.NewCThostFtdcInstrumentField()
-
-    pResult = nil
+    pResult  = nil
 
     p.TradeSpi.OnRspQryInstrument(pResult, p.GetRspInfo(), nRequestID, true)
 
@@ -1002,6 +1086,12 @@ func (p *TradeApi) ReqQryInstrument(pQryInstrument goctp.CThostFtdcQryInstrument
 
 // 请求查询行情
 func (p *TradeApi) ReqQryDepthMarketData(pQryDepthMarketData goctp.CThostFtdcQryDepthMarketDataField, nRequestID int) int {
+
+    pResult := goctp.NewCThostFtdcDepthMarketDataField()
+    pResult  = nil
+
+    p.TradeSpi.OnRspQryDepthMarketData(pResult, p.GetRspInfo(), nRequestID, true)
+
     return 0
 }
 
@@ -1072,21 +1162,45 @@ func (p *TradeApi) ReqQryInvestorPositionDetail(pQryInvestorPositionDetail goctp
 
 // 请求查询客户通知
 func (p *TradeApi) ReqQryNotice(pQryNotice goctp.CThostFtdcQryNoticeField, nRequestID int) int {
+
+    pResult := goctp.NewCThostFtdcNoticeField()
+    pResult  = nil
+
+    p.TradeSpi.OnRspQryNotice(pResult, p.GetRspInfo(), nRequestID, true)
+
     return 0
 }
 
 // 请求查询结算信息确认
 func (p *TradeApi) ReqQrySettlementInfoConfirm(pQrySettlementInfoConfirm goctp.CThostFtdcQrySettlementInfoConfirmField, nRequestID int) int {
+
+    pResult := goctp.NewCThostFtdcSettlementInfoConfirmField()
+    pResult  = nil
+
+    p.TradeSpi.OnRspQrySettlementInfoConfirm(pResult, p.GetRspInfo(), nRequestID, true)
+
     return 0
 }
 
 // 请求查询投资者持仓明细
 func (p *TradeApi) ReqQryInvestorPositionCombineDetail(pQryInvestorPositionCombineDetail goctp.CThostFtdcQryInvestorPositionCombineDetailField, nRequestID int) int {
+
+    pResult := goctp.NewCThostFtdcInvestorPositionCombineDetailField()
+    pResult  = nil
+
+    p.TradeSpi.OnRspQryInvestorPositionCombineDetail(pResult, p.GetRspInfo(), nRequestID, true)
+
     return 0
 }
 
 // 请求查询保证金监管系统经纪公司资金账户密钥
 func (p *TradeApi) ReqQryCFMMCTradingAccountKey(pQryCFMMCTradingAccountKey goctp.CThostFtdcQryCFMMCTradingAccountKeyField, nRequestID int) int {
+
+    pResult := goctp.NewCThostFtdcCFMMCTradingAccountKeyField()
+    pResult  = nil
+
+    p.TradeSpi.OnRspQryCFMMCTradingAccountKey(pResult, p.GetRspInfo(), nRequestID, true)
+
     return 0
 }
 
@@ -1102,16 +1216,34 @@ func (p *TradeApi) ReqQryInvestorProductGroupMargin(pQryInvestorProductGroupMarg
 
 // 请求查询交易所保证金率
 func (p *TradeApi) ReqQryExchangeMarginRate(pQryExchangeMarginRate goctp.CThostFtdcQryExchangeMarginRateField, nRequestID int) int {
+
+    pResult := goctp.NewCThostFtdcExchangeMarginRateField()
+    pResult  = nil
+
+    p.TradeSpi.OnRspQryExchangeMarginRate(pResult, p.GetRspInfo(), nRequestID, true)
+
     return 0
 }
 
 // 请求查询交易所调整保证金率
 func (p *TradeApi) ReqQryExchangeMarginRateAdjust(pQryExchangeMarginRateAdjust goctp.CThostFtdcQryExchangeMarginRateAdjustField, nRequestID int) int {
+
+    pResult := goctp.NewCThostFtdcExchangeMarginRateAdjustField()
+    pResult  = nil
+
+    p.TradeSpi.OnRspQryExchangeMarginRateAdjust(pResult, p.GetRspInfo(), nRequestID, true)
+
     return 0
 }
 
 // 请求查询汇率
 func (p *TradeApi) ReqQryExchangeRate(pQryExchangeRate goctp.CThostFtdcQryExchangeRateField, nRequestID int) int {
+
+    pResult := goctp.NewCThostFtdcExchangeRateField()
+    pResult  = nil
+
+    p.TradeSpi.OnRspQryExchangeRate(pResult, p.GetRspInfo(), nRequestID, true)
+
     return 0
 }
 
@@ -1142,6 +1274,12 @@ func (p *TradeApi) ReqQryMMOptionInstrCommRate(pQryMMOptionInstrCommRate goctp.C
 
 // 请求查询报单手续费
 func (p *TradeApi) ReqQryInstrumentOrderCommRate(pQryInstrumentOrderCommRate goctp.CThostFtdcQryInstrumentOrderCommRateField, nRequestID int) int {
+
+    pResult := goctp.NewCThostFtdcInstrumentOrderCommRateField()
+    pResult  = nil
+
+    p.TradeSpi.OnRspQryInstrumentOrderCommRate(pResult, p.GetRspInfo(), nRequestID, true)
+
     return 0
 }
 
@@ -1162,36 +1300,78 @@ func (p *TradeApi) ReqQrySecAgentTradeInfo(pQrySecAgentTradeInfo goctp.CThostFtd
 
 // 请求查询期权交易成本
 func (p *TradeApi) ReqQryOptionInstrTradeCost(pQryOptionInstrTradeCost goctp.CThostFtdcQryOptionInstrTradeCostField, nRequestID int) int {
+
+    pResult := goctp.NewCThostFtdcOptionInstrTradeCostField()
+    pResult  = nil
+
+    p.TradeSpi.OnRspQryOptionInstrTradeCost(pResult, p.GetRspInfo(), nRequestID, true)
+
     return 0
 }
 
 // 请求查询期权合约手续费
 func (p *TradeApi) ReqQryOptionInstrCommRate(pQryOptionInstrCommRate goctp.CThostFtdcQryOptionInstrCommRateField, nRequestID int) int {
+
+    pResult := goctp.NewCThostFtdcOptionInstrCommRateField()
+    pResult  = nil
+
+    p.TradeSpi.OnRspQryOptionInstrCommRate(pResult, p.GetRspInfo(), nRequestID, true)
+
     return 0
 }
 
 // 请求查询执行宣告
 func (p *TradeApi) ReqQryExecOrder(pQryExecOrder goctp.CThostFtdcQryExecOrderField, nRequestID int) int {
+
+    pResult := goctp.NewCThostFtdcExecOrderField()
+    pResult  = nil
+
+    p.TradeSpi.OnRspQryExecOrder(pResult, p.GetRspInfo(), nRequestID, true)
+
     return 0
 }
 
 // 请求查询询价
 func (p *TradeApi) ReqQryForQuote(pQryForQuote goctp.CThostFtdcQryForQuoteField, nRequestID int) int {
+
+    pResult := goctp.NewCThostFtdcForQuoteField()
+    pResult  = nil
+
+    p.TradeSpi.OnRspQryForQuote(pResult, p.GetRspInfo(), nRequestID, true)
+
     return 0
 }
 
 // 请求查询报价
 func (p *TradeApi) ReqQryQuote(pQryQuote goctp.CThostFtdcQryQuoteField, nRequestID int) int {
+
+    pResult := goctp.NewCThostFtdcQuoteField()
+    pResult  = nil
+
+    p.TradeSpi.OnRspQryQuote(pResult, p.GetRspInfo(), nRequestID, true)
+
     return 0
 }
 
 // 请求查询期权自对冲
 func (p *TradeApi) ReqQryOptionSelfClose(pQryOptionSelfClose goctp.CThostFtdcQryOptionSelfCloseField, nRequestID int) int {
+
+    pResult := goctp.NewCThostFtdcOptionSelfCloseField()
+    pResult  = nil
+
+    p.TradeSpi.OnRspQryOptionSelfClose(pResult, p.GetRspInfo(), nRequestID, true)
+
     return 0
 }
 
 // 请求查询投资单元
 func (p *TradeApi) ReqQryInvestUnit(pQryInvestUnit goctp.CThostFtdcQryInvestUnitField, nRequestID int) int {
+
+    pResult := goctp.NewCThostFtdcInvestUnitField()
+    pResult  = nil
+
+    p.TradeSpi.OnRspQryInvestUnit(pResult, p.GetRspInfo(), nRequestID, true)
+
     return 0
 }
 
@@ -1222,31 +1402,67 @@ func (p *TradeApi) ReqQryContractBank(pQryContractBank goctp.CThostFtdcQryContra
 
 // 请求查询预埋单
 func (p *TradeApi) ReqQryParkedOrder(pQryParkedOrder goctp.CThostFtdcQryParkedOrderField, nRequestID int) int {
+
+    pResult := goctp.NewCThostFtdcParkedOrderField()
+    pResult  = nil
+
+    p.TradeSpi.OnRspQryParkedOrder(pResult, p.GetRspInfo(), nRequestID, true)
+
     return 0
 }
 
 // 请求查询预埋撤单
 func (p *TradeApi) ReqQryParkedOrderAction(pQryParkedOrderAction goctp.CThostFtdcQryParkedOrderActionField, nRequestID int) int {
+
+    pResult := goctp.NewCThostFtdcParkedOrderActionField()
+    pResult  = nil
+
+    p.TradeSpi.OnRspQryParkedOrderAction(pResult, p.GetRspInfo(), nRequestID, true)
+
     return 0
 }
 
 // 请求查询交易通知
 func (p *TradeApi) ReqQryTradingNotice(pQryTradingNotice goctp.CThostFtdcQryTradingNoticeField, nRequestID int) int {
+
+    pResult := goctp.NewCThostFtdcTradingNoticeField()
+    pResult  = nil
+
+    p.TradeSpi.OnRspQryTradingNotice(pResult, p.GetRspInfo(), nRequestID, true)
+
     return 0
 }
 
 // 请求查询经纪公司交易参数
 func (p *TradeApi) ReqQryBrokerTradingParams(pQryBrokerTradingParams goctp.CThostFtdcQryBrokerTradingParamsField, nRequestID int) int {
+
+    pResult := goctp.NewCThostFtdcBrokerTradingParamsField()
+    pResult  = nil
+
+    p.TradeSpi.OnRspQryBrokerTradingParams(pResult, p.GetRspInfo(), nRequestID, true)
+
     return 0
 }
 
 // 请求查询经纪公司交易算法
 func (p *TradeApi) ReqQryBrokerTradingAlgos(pQryBrokerTradingAlgos goctp.CThostFtdcQryBrokerTradingAlgosField, nRequestID int) int {
+
+    pResult := goctp.NewCThostFtdcBrokerTradingAlgosField()
+    pResult  = nil
+
+    p.TradeSpi.OnRspQryBrokerTradingAlgos(pResult, p.GetRspInfo(), nRequestID, true)
+
     return 0
 }
 
 // 请求查询监控中心用户令牌
 func (p *TradeApi) ReqQueryCFMMCTradingAccountToken(pQueryCFMMCTradingAccountToken goctp.CThostFtdcQueryCFMMCTradingAccountTokenField, nRequestID int) int {
+
+    pResult := goctp.NewCThostFtdcQueryCFMMCTradingAccountTokenField()
+    pResult  = nil
+
+    p.TradeSpi.OnRspQueryCFMMCTradingAccountToken(pResult, p.GetRspInfo(), nRequestID, true)
+
     return 0
 }
 
@@ -1277,6 +1493,12 @@ func (p *TradeApi) ReqQryCombPromotionParam(pQryCombPromotionParam goctp.CThostF
 
 // 投资者风险结算持仓查询
 func (p *TradeApi) ReqQryRiskSettleInvstPosition(pQryRiskSettleInvstPosition goctp.CThostFtdcQryRiskSettleInvstPositionField, nRequestID int) int {
+
+    pResult := goctp.NewCThostFtdcRiskSettleInvstPositionField()
+    pResult  = nil
+
+    p.TradeSpi.OnRspQryRiskSettleInvstPosition(pResult, p.GetRspInfo(), nRequestID, true)
+
     return 0
 }
 
@@ -1284,6 +1506,7 @@ func (p *TradeApi) ReqQryRiskSettleInvstPosition(pQryRiskSettleInvstPosition goc
 func (p *TradeApi) ReqQryRiskSettleProductStatus(pQryRiskSettleProductStatus goctp.CThostFtdcQryRiskSettleProductStatusField, nRequestID int) int {
     return 0
 }
+
 
 // 设置报单引用的 tick 数据
 func (p *TradeApi) SetOrderRefTick(iRequestID int, pTick TickStruct) {

@@ -75,11 +75,23 @@ func (p *MdApi) UnSubscribeForQuoteRsp(ppInstrumentID *string, nRequestID int) i
 
 // 用户登录请求
 func (p *MdApi) ReqUserLogin(pReqUserLoginField goctp.CThostFtdcReqUserLoginField, nRequestID int) int {
+
+    pResult := goctp.NewCThostFtdcRspUserLoginField()
+    pResult  = nil
+
+    p.MdSpi.OnRspUserLogin(pResult, p.GetRspInfo(), nRequestID, true)
+
     return 0
 }
 
 // 登出请求
 func (p *MdApi) ReqUserLogout(pUserLogout goctp.CThostFtdcUserLogoutField, nRequestID int) int {
+
+    pResult := goctp.NewCThostFtdcUserLogoutField()
+    pResult  = nil
+
+    p.MdSpi.OnRspUserLogout(pResult, p.GetRspInfo(), nRequestID, true)
+
     return 0
 }
 

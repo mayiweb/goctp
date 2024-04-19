@@ -1,5 +1,6 @@
 
 build:
+	go mod tidy -v
 	go build -v -x -linkshared -o ctp *.go
 
 error:
