@@ -135,7 +135,7 @@ func  (p *TradeApi) Reset() {
     p.OldThis().SessionID  = 888888
     p.OldThis().OrderSysID = 1000000
     p.OldThis().TradeID    = 5000000
-    p.OldThis().Margin     = 1000
+    p.OldThis().Margin     = 0.10
     p.OldThis().Commission = 1
     p.OldThis().TradingDay = StringToInt(time.Now().Format("20060102"))
 
@@ -357,17 +357,19 @@ func (p *TradeApi) ReqOrderInsert(pInputOrder goctp.CThostFtdcInputOrderField, n
             // pRspInfo.SetErrorMsg("CTP:平仓量超过持仓量")
             pRspInfo.SetErrorMsg("CTP: Closing position exceeds holding position")
 
-            pOrderAction := goctp.NewCThostFtdcOrderActionField()
+            pOrderAction := goctp.NewCThostFtdcInputOrderField()
             pOrderAction.SetBrokerID(pInputOrder.GetBrokerID())
             pOrderAction.SetInvestorID(pInputOrder.GetInvestorID())
             pOrderAction.SetInstrumentID(pInputOrder.GetInstrumentID())
             pOrderAction.SetExchangeID(pInputOrder.GetExchangeID())
             pOrderAction.SetOrderRef(pInputOrder.GetOrderRef())
-            pOrderAction.SetOrderSysID(p.GetOrderSysID())
-            pOrderAction.SetSessionID(p.SessionID)
+            pOrderAction.SetDirection(pInputOrder.GetDirection())
+            pOrderAction.SetCombOffsetFlag(pInputOrder.GetCombOffsetFlag())
+            pOrderAction.SetLimitPrice(pInputOrder.GetLimitPrice())
+            pOrderAction.SetVolumeTotalOriginal(pInputOrder.GetVolumeTotalOriginal())
 
-            // 报单操作错误回报
-            p.TradeSpi.OnErrRtnOrderAction(pOrderAction, pRspInfo)
+            // 报单出错响应
+            p.TradeSpi.OnRspOrderInsert(pOrderAction, pRspInfo, nRequestID, true)
 
             return 0
         }
@@ -966,8 +968,10 @@ func (p *TradeApi) ReqQryTradingAccount(pQryTradingAccount goctp.CThostFtdcQryTr
 
         val := v.(PositionDetailStruct)
 
-        Margin      += float64(val.Volume) * p.Margin
-        ExchMargin  += float64(val.Volume) * p.Margin
+        mInstrument, _ := GetInstrumentInfo(val.InstrumentID)
+
+        Margin      += p.Margin * val.OpenPrice * float64(mInstrument.VolumeMultiple) * float64(val.Volume)
+        ExchMargin  += p.Margin * val.OpenPrice * float64(mInstrument.VolumeMultiple) * float64(val.Volume)
         CloseProfit += val.CloseProfitByTrade
     }
 
@@ -1039,6 +1043,8 @@ func (p *TradeApi) ReqQryTradingCode(pQryTradingCode goctp.CThostFtdcQryTradingC
 func (p *TradeApi) ReqQryInstrumentMarginRate(pQryInstrumentMarginRate goctp.CThostFtdcQryInstrumentMarginRateField, nRequestID int) int {
 
     pResult := goctp.NewCThostFtdcInstrumentMarginRateField()
+
+    pResult.SetInstrumentID(pQryInstrumentMarginRate.GetInstrumentID())
     pResult  = nil
 
     p.TradeSpi.OnRspQryInstrumentMarginRate(pResult, p.GetRspInfo(), nRequestID, true)
@@ -1050,7 +1056,11 @@ func (p *TradeApi) ReqQryInstrumentMarginRate(pQryInstrumentMarginRate goctp.CTh
 func (p *TradeApi) ReqQryInstrumentCommissionRate(pQryInstrumentCommissionRate goctp.CThostFtdcQryInstrumentCommissionRateField, nRequestID int) int {
 
     pResult := goctp.NewCThostFtdcInstrumentCommissionRateField()
-    pResult  = nil
+
+    pResult.SetInstrumentID(pQryInstrumentCommissionRate.GetInstrumentID())
+    pResult.SetOpenRatioByVolume(1.00)
+    pResult.SetCloseRatioByVolume(1.00)
+    pResult.SetCloseTodayRatioByVolume(1.00)
 
     p.TradeSpi.OnRspQryInstrumentCommissionRate(pResult, p.GetRspInfo(), nRequestID, true)
 
@@ -1218,7 +1228,13 @@ func (p *TradeApi) ReqQryInvestorProductGroupMargin(pQryInvestorProductGroupMarg
 func (p *TradeApi) ReqQryExchangeMarginRate(pQryExchangeMarginRate goctp.CThostFtdcQryExchangeMarginRateField, nRequestID int) int {
 
     pResult := goctp.NewCThostFtdcExchangeMarginRateField()
-    pResult  = nil
+
+    pResult.SetInstrumentID(pQryExchangeMarginRate.GetInstrumentID())
+    pResult.SetHedgeFlag([]byte("1")[0])
+    pResult.SetLongMarginRatioByMoney(0.10)
+    pResult.SetLongMarginRatioByVolume(0.00)
+    pResult.SetShortMarginRatioByMoney(0.10)
+    pResult.SetShortMarginRatioByVolume(0.00)
 
     p.TradeSpi.OnRspQryExchangeMarginRate(pResult, p.GetRspInfo(), nRequestID, true)
 
@@ -1516,7 +1532,6 @@ func (p *TradeApi) SetOrderRefTick(iRequestID int, pTick TickStruct) {
 
 // 设置合约信息
 func (p *TradeApi) SetInstrument(sInstrument InstrumentStruct) {
-
     MapInstruments.Set(ToUpper(sInstrument.InstrumentID), sInstrument)
 }
 
@@ -1529,16 +1544,14 @@ func (p *TradeApi) SetTradingDay(TradingDay int) {
 // 获得合约详情信息
 func GetInstrumentInfo(InstrumentID string) (InstrumentStruct, bool) {
 
-    // 将合约转换成大写
-    InstrumentID = ToUpper(InstrumentID)
-
-    if v, ok := MapInstruments.Get(InstrumentID); ok {
-        return v.(InstrumentStruct), true
-    }
-
     var mInstrument InstrumentStruct
 
-    return mInstrument, false
+    val, ok := MapInstruments.Get(ToUpper(InstrumentID));
+    if !ok {
+        return mInstrument, false
+    }
+
+    return val.(InstrumentStruct), true
 }
 
 /**
