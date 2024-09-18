@@ -1,16 +1,16 @@
 
 %module(directors="1") goctp
 %{
-#include "./api/v6.7.2_20230913_api_traderapi_se_linux64/ThostFtdcUserApiDataType.h"
-#include "./api/v6.7.2_20230913_api_traderapi_se_linux64/ThostFtdcUserApiStruct.h"
-#include "./api/v6.7.2_20230913_api_traderapi_se_linux64/ThostFtdcTraderApi.h"
-#include "./api/v6.7.2_20230913_api_traderapi_se_linux64/ThostFtdcMdApi.h"
+#include "./api/v6.7.7_20240607_api_traderapi_se_linux64/ThostFtdcUserApiDataType.h"
+#include "./api/v6.7.7_20240607_api_traderapi_se_linux64/ThostFtdcUserApiStruct.h"
+#include "./api/v6.7.7_20240607_api_traderapi_se_linux64/ThostFtdcTraderApi.h"
+#include "./api/v6.7.7_20240607_api_traderapi_se_linux64/ThostFtdcMdApi.h"
 %}
 
 %feature("director") CThostFtdcMdSpi;
 %feature("director") CThostFtdcTraderSpi;
 
-%include "./api/v6.7.2_20230913_api_traderapi_se_linux64/ThostFtdcUserApiDataType.h"
-%include "./api/v6.7.2_20230913_api_traderapi_se_linux64/ThostFtdcUserApiStruct.h"
-%include "./api/v6.7.2_20230913_api_traderapi_se_linux64/ThostFtdcTraderApi.h"
-%include "./api/v6.7.2_20230913_api_traderapi_se_linux64/ThostFtdcMdApi.h"
+%include "./api/v6.7.7_20240607_api_traderapi_se_linux64/ThostFtdcUserApiDataType.h"
+%include "./api/v6.7.7_20240607_api_traderapi_se_linux64/ThostFtdcUserApiStruct.h"
+%include "./api/v6.7.7_20240607_api_traderapi_se_linux64/ThostFtdcTraderApi.h"
+%include "./api/v6.7.7_20240607_api_traderapi_se_linux64/ThostFtdcMdApi.h"

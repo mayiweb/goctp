@@ -486,10 +486,6 @@ func (p *TradeApi) ReqOrderInsert(pInputOrder goctp.CThostFtdcInputOrderField, n
     sPosition.CloseProfitByTrade = 0.00
     sPosition.MapKey             = Sprintf("%v", sTrade.TradeID)
 
-
-    // 平仓状态（默认为成功，如果未成功则不发送成交通知）
-    ClosePositionStatus := true
-
     // 开仓
     if sTrade.OffsetFlag == "0" {
 
@@ -527,20 +523,11 @@ func (p *TradeApi) ReqOrderInsert(pInputOrder goctp.CThostFtdcInputOrderField, n
                 MapPositionDetails.Set(val.MapKey, val)
             }
         }
-
-        // 有未执行平仓的数据
-        if PositionDetailVolume != 0 {
-            ClosePositionStatus = false
-        }
     }
 
-    if ClosePositionStatus {
+    p.TradeSpi.OnRtnOrder(pOrder)
 
-    }
-
-        p.TradeSpi.OnRtnOrder(pOrder)
-
-        p.TradeSpi.OnRtnTrade(pTrade)
+    p.TradeSpi.OnRtnTrade(pTrade)
 
     return 0
 }

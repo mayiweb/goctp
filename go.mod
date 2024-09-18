@@ -1,3 +1,3 @@
-module github.com/mayiweb/goctp
+module gitee.com/mayiweb/goctp
 
-go 1.20
+go 1.15
